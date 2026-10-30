@@ -107,6 +107,11 @@ a.price:hover{background:var(--mango)}
 .fm input:focus-visible,.fm textarea:focus-visible{outline:3px solid var(--mango);border-color:var(--mango)}
 .fm button{justify-self:start;font:700 16px Onest,sans-serif;background:var(--mango);color:var(--indigo);border:2px solid var(--mango);border-radius:999px;padding:12px 28px;cursor:pointer}
 .fm button:hover{background:var(--milk);border-color:var(--milk)}
+.fm button:disabled{opacity:.6;cursor:wait}
+.fm .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.fs{margin:0;min-height:1.6em;font-weight:600;line-height:1.4}
+.fs.ok{color:var(--mint)}
+.fs.err{color:var(--pink)}
 .prin{grid-template-columns:repeat(3,1fr)}
 .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
 @media(prefers-reduced-motion:reduce){.mt{animation:none}}
@@ -228,7 +233,7 @@ a.price:hover{background:var(--mango)}
 <p style="margin:24px 0 8px;font-weight:600">Что мне нужно для старта:</p>
 <ul style="margin:0;padding-left:20px"><li>цель сайта и аудитория</li><li>примеры, которые нравятся</li><li>тексты, фото и логотип, если есть</li><li>сроки и пожелания</li></ul>
 </div>
-<form class="fm" id="brief"><input name="n" placeholder="Ваше имя" required aria-label="Ваше имя"><input name="c" placeholder="Telegram или почта для связи" required aria-label="Контакт для связи"><textarea name="m" placeholder="Коротко о проекте: что за сайт и что он должен делать" aria-label="О проекте"></textarea><button type="submit">Отправить заявку</button></form>
+<form class="fm" id="brief" action="https://api.web3forms.com/submit" method="POST"><input type="hidden" name="access_key" value="979e1d47-1b11-47dd-ac58-50d271e7fedb"><input type="hidden" name="subject" value="Заявка с портфолио"><input type="hidden" name="from_name" value="Портфолио"><input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true"><input name="name" placeholder="Ваше имя" required aria-label="Ваше имя" autocomplete="name"><input name="contact" placeholder="Telegram или почта для связи" required aria-label="Контакт для связи"><textarea name="message" placeholder="Коротко о проекте: что за сайт и что он должен делать" aria-label="О проекте"></textarea><button type="submit">Отправить заявку</button><p class="fs" id="fs" role="status" aria-live="polite"></p></form>
 </div>
 </section>
 <footer>© 2026 Милана</footer>
@@ -252,7 +257,25 @@ addEventListener("resize",lay);
 })();
 </script>
 <script>
-document.getElementById("brief").addEventListener("submit",function(e){e.preventDefault();var f=e.target,b="Имя: "+f.n.value+"\nСвязь: "+f.c.value+"\n\n"+f.m.value;location.href="mailto:milana.zhernakova475@mail.ru?subject="+encodeURIComponent("Заявка с портфолио")+"&body="+encodeURIComponent(b)});
+(function(){
+var f=document.getElementById("brief"),st=document.getElementById("fs"),btn=f.querySelector("button[type=submit]");
+function v(n){return f.elements[n].value.trim()}
+f.addEventListener("submit",function(e){
+e.preventDefault();
+if(f.elements["botcheck"].checked)return;
+st.className="fs";st.textContent="Отправляю…";btn.disabled=true;
+var d={access_key:v("access_key"),subject:"Заявка с портфолио: "+v("name"),from_name:"Портфолио",name:v("name"),contact:v("contact"),message:v("message")};
+if(/^\S+@\S+\.\S+$/.test(d.contact))d.email=d.contact;
+fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(d)})
+.then(function(r){return r.json().then(function(j){return{ok:r.ok&&j.success,j:j}})})
+.then(function(x){
+if(!x.ok)throw new Error(x.j&&x.j.message||"fail");
+f.reset();st.className="fs ok";st.textContent="Спасибо! Заявка отправлена, я отвечу в ближайшее время."})
+.catch(function(){
+st.className="fs err";st.textContent="Не получилось отправить. Напишите мне напрямую: milana.zhernakova475@mail.ru или в Telegram @aaapchxD."})
+.then(function(){btn.disabled=false})
+});
+})();
 </script>
 </body>
 </html>
