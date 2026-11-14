@@ -30,17 +30,8 @@ body {
 
 @font-face {
   font-family: "Soyuz Grotesk";
-  src: url("fonts/SoyuzGrotesk-Bold.woff2") format("woff2"),
-       url("fonts/SoyuzGrotesk-Bold.woff") format("woff");
+  src: url("fonts/Soyuz Grotesk Bold.woff") format("woff");
   font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Soyuz Grotesk";
-  src: url("fonts/SoyuzGrotesk-Regular.woff2") format("woff2"),
-       url("fonts/SoyuzGrotesk-Regular.woff") format("woff");
-  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
